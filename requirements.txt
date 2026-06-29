@@ -3,3 +3,8 @@ pydantic-settings
 fastapi[standard]
 pydantic-settings
 openai
+fastapi[standard]
+pydantic-settings
+openai
+pytest
+httpx

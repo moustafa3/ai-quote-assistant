@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-quote-assistant-api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: ai-quote-assistant
+      ENVIRONMENT: docker
+      LLM_PROVIDER: mock
+      OPENAI_API_KEY: ""
+      OPENAI_MODEL: gpt-5.5
+    volumes:
+      - ./docs:/app/docs:ro
+    restart: unless-stopped

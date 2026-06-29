@@ -199,3 +199,41 @@ Future improvements:
 - add GitHub Actions
 - add PostgreSQL
 - add embeddings and pgvector
+
+## Run tests
+
+Install dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Run all tests:
+
+```powershell
+pytest
+```
+
+Run tests with verbose output:
+
+```powershell
+pytest -v
+```
+
+The test suite covers:
+
+- health endpoint
+- ERP/CRM mock endpoints
+- document classification
+- local RAG endpoint
+- quote generation
+- quote retrieval
+- dashboard KPIs
+
+Expected result:
+
+```text
+14 passed
+```
+
+The exact number can change if more tests are added later.
