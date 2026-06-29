@@ -1,88 +1,305 @@
 # AI Quote Assistant
 
-AI Quote Assistant is a FastAPI project that simulates a business AI agent for quote generation, document classification, simple RAG, and ERP/CRM integration.
+AI Quote Assistant is a professional FastAPI project that simulates a business AI agent for small and mid-sized companies.
 
-## Current status
+The API demonstrates how an AI assistant can classify business documents, answer questions over local documents with a simple RAG approach, retrieve customer and product data from a simulated ERP/CRM, generate quote drafts, require human validation, and expose operational KPIs through a mini dashboard.
 
-Implemented:
+## 1. Project overview
 
-- Health endpoint
-- Clean Architecture inspired structure
-- Mock ERP/CRM integration
-- Document classification
-- Simple local-document RAG
-- AI quote draft generation with mandatory human validation
-- In-memory quote storage and quote retrieval by ID
-- Mini dashboard KPIs
+AI Quote Assistant is a backend API designed to simulate a real-world AI agent connected to business systems.
 
-## API endpoints
+It focuses on a concrete business use case: helping a sales team generate quote drafts from customer requests, internal documents, and ERP/CRM data.
 
-### Health
+The generated quote is never considered final. It always requires human validation before being sent to a customer.
+
+## 2. Business context
+
+Many small and mid-sized companies manage sales requests across multiple tools:
+
+* ERP systems
+* CRM platforms
+* internal documents
+* product catalogs
+* commercial conditions
+* customer emails
+
+This creates manual work for sales teams. They need to search for information, check pricing, apply discounts, prepare quote drafts, and validate commercial rules.
+
+AI Quote Assistant shows how an AI agent can assist this workflow while keeping a human in control.
+
+## 3. Why this project
+
+This project was built to demonstrate practical backend and AI engineering skills:
+
+* Clean FastAPI architecture
+* business-oriented AI agent design
+* simple but useful RAG over local documents
+* simulated ERP/CRM integration
+* quote generation logic
+* mandatory human validation
+* API testing with Pytest
+* Docker setup
+* GitHub Actions CI
+* clear documentation and demo scenario
+
+The project is intentionally realistic but not over-engineered. It is designed as a strong MVP that can be extended toward production.
+
+## 4. Features
+
+### Health check
 
 ```text
 GET /api/v1/health
 ```
 
-### ERP/CRM mock
+Returns the API status.
+
+### Mock ERP/CRM integration
 
 ```text
 GET /api/v1/erp/customers
 GET /api/v1/erp/products
 ```
 
-### Documents
+Returns simulated customers and products.
+
+### Document classification
 
 ```text
 POST /api/v1/documents/classify
 ```
 
-### Chat / RAG
+Classifies business documents into:
+
+* `product_catalog`
+* `commercial_conditions`
+* `customer_request`
+* `unknown`
+
+### Simple local RAG
 
 ```text
 POST /api/v1/chat/ask
 ```
 
-### Quotes
+Answers questions using local text documents from the `docs/` folder.
+
+The current implementation uses keyword matching to keep the MVP simple and fully testable.
+
+### Quote draft generation
 
 ```text
 POST /api/v1/quotes/generate
+```
+
+Generates an AI-assisted quote draft using:
+
+* customer data
+* product catalog data
+* commercial discount rules
+* assumptions
+* validation points
+* confidence score
+* mandatory human validation
+
+### Quote retrieval
+
+```text
 GET /api/v1/quotes/{quote_id}
 ```
 
-### Dashboard
+Returns a previously generated quote draft from the in-memory repository.
+
+### Dashboard KPIs
 
 ```text
 GET /api/v1/dashboard/kpis
 ```
 
-## Run locally on Windows
+Returns simple KPIs:
 
-Create and activate a virtual environment:
+* active agents
+* generated quotes
+* average confidence score
+* human validation rate
+* estimated time saved
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
+## 5. Architecture
 
-Install dependencies:
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-Run the API:
-
-```powershell
-fastapi dev app/main.py
-```
-
-Open Swagger:
+The project follows a Clean Architecture inspired structure.
 
 ```text
-http://localhost:8000/docs
+ai-quote-assistant/
+│
+├── app/
+│   ├── main.py
+│   ├── api/
+│   │   └── v1/
+│   ├── core/
+│   ├── domain/
+│   ├── application/
+│   │   ├── schemas/
+│   │   └── use_cases/
+│   ├── infrastructure/
+│   │   └── repositories/
+│   ├── integrations/
+│   └── ai/
+│
+├── docs/
+├── tests/
+├── .github/
+│   └── workflows/
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
-## Example quote generation request
+### Layer responsibilities
+
+| Layer                   | Responsibility                                             |
+| ----------------------- | ---------------------------------------------------------- |
+| `api/v1`                | FastAPI routes                                             |
+| `application/use_cases` | Application orchestration                                  |
+| `application/schemas`   | Pydantic request and response models                       |
+| `domain`                | Business entities and pure business rules                  |
+| `ai`                    | AI services, RAG, classifier, quote agent, LLM abstraction |
+| `integrations`          | Simulated ERP/CRM client                                   |
+| `infrastructure`        | Repositories and persistence adapters                      |
+| `core`                  | Configuration, logging, exceptions                         |
+
+The goal is to keep routes thin and business logic isolated.
+
+## 6. Tech stack
+
+* Python
+* FastAPI
+* Pydantic
+* Pydantic Settings
+* OpenAI SDK-ready architecture
+* Pytest
+* HTTPX / FastAPI TestClient
+* Docker
+* Docker Compose
+* GitHub Actions
+* PowerShell-friendly setup for Windows
+
+## 7. API endpoints
+
+### Health
+
+```http
+GET /api/v1/health
+```
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "service": "ai-quote-assistant"
+}
+```
+
+### ERP customers
+
+```http
+GET /api/v1/erp/customers
+```
+
+Example response:
+
+```json
+[
+  {
+    "id": "cust_001",
+    "name": "Entreprise Martin",
+    "type": "ETI",
+    "sector": "Industrie",
+    "discount_rate": 0.1,
+    "crm_status": "prospect_chaud"
+  }
+]
+```
+
+### ERP products
+
+```http
+GET /api/v1/erp/products
+```
+
+Example response:
+
+```json
+[
+  {
+    "id": "prod_001",
+    "name": "Agent IA Devis",
+    "unit_price": 2000,
+    "billing": "monthly",
+    "description": "Agent permettant de générer des brouillons de devis à partir de demandes commerciales."
+  }
+]
+```
+
+### Document classification
+
+```http
+POST /api/v1/documents/classify
+```
+
+Example request:
+
+```json
+{
+  "filename": "commercial_conditions.txt",
+  "content": "Les clients ETI bénéficient d'une remise de 10 %."
+}
+```
+
+Example response:
+
+```json
+{
+  "document_type": "commercial_conditions",
+  "confidence_score": 0.84
+}
+```
+
+### Chat / RAG
+
+```http
+POST /api/v1/chat/ask
+```
+
+Example request:
+
+```json
+{
+  "question": "Quelle remise appliquer pour une ETI ?"
+}
+```
+
+Example response:
+
+```json
+{
+  "answer": "Les clients ETI bénéficient d’une remise de 10 %.",
+  "sources": [
+    "commercial_conditions.txt"
+  ]
+}
+```
+
+### Quote generation
+
+```http
+POST /api/v1/quotes/generate
+```
+
+Example request:
 
 ```json
 {
@@ -91,7 +308,7 @@ http://localhost:8000/docs
 }
 ```
 
-Expected response:
+Example response:
 
 ```json
 {
@@ -128,17 +345,15 @@ Expected response:
 }
 ```
 
-## Retrieve a saved quote
+### Quote retrieval
 
-After generating a quote, use its ID:
-
-```text
+```http
 GET /api/v1/quotes/quote_001
 ```
 
-## Dashboard KPIs
+### Dashboard KPIs
 
-```text
+```http
 GET /api/v1/dashboard/kpis
 ```
 
@@ -154,53 +369,74 @@ Example response after generating one quote:
 }
 ```
 
-## Storage note
+## 8. How to run locally on Windows
 
-The current implementation uses an in-memory repository.
+Create and activate a virtual environment:
 
-This is useful for the MVP because it is simple and fast to demo.
-
-Limitation:
-
-- quotes are lost when the API server restarts
-
-Future production improvement:
-
-- replace `InMemoryQuoteRepository` with a PostgreSQL repository using SQLAlchemy
-
-## LLM mode
-
-Default mode:
-
-```env
-LLM_PROVIDER=mock
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-This mode works without an API key.
+Install dependencies:
 
-Optional mode:
-
-```env
-LLM_PROVIDER=openai
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-5.5
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-Never commit the `.env` file.
+Run the API:
 
-## Notes
+```powershell
+fastapi dev app/main.py
+```
 
-The quote generated by the API is always a draft and always requires human validation.
+Open Swagger:
 
-Future improvements:
+```text
+http://localhost:8000/docs
+```
 
-- add tests
-- add Docker
-- add GitHub Actions
-- add PostgreSQL
-- add embeddings and pgvector
+Health check:
 
-## Run tests
+```text
+http://localhost:8000/api/v1/health
+```
+
+## 9. How to run with Docker
+
+Make sure Docker Desktop is running.
+
+Build the image:
+
+```powershell
+docker compose build
+```
+
+Start the API:
+
+```powershell
+docker compose up
+```
+
+Or build and start in one command:
+
+```powershell
+docker compose up --build
+```
+
+Open Swagger:
+
+```text
+http://localhost:8000/docs
+```
+
+Stop the container:
+
+```powershell
+docker compose down
+```
+
+## 10. How to run tests
 
 Install dependencies:
 
@@ -222,18 +458,113 @@ pytest -v
 
 The test suite covers:
 
-- health endpoint
-- ERP/CRM mock endpoints
-- document classification
-- local RAG endpoint
-- quote generation
-- quote retrieval
-- dashboard KPIs
+* health endpoint
+* ERP/CRM mock endpoints
+* document classification
+* local RAG endpoint
+* quote generation
+* quote retrieval
+* dashboard KPIs
 
-Expected result:
+## 11. Demo scenario
+
+A complete demo scenario is available here:
 
 ```text
-14 passed
+docs/demo_script.md
 ```
 
-The exact number can change if more tests are added later.
+Recommended demo flow:
+
+1. Open Swagger.
+2. Check the health endpoint.
+3. List ERP customers and products.
+4. Classify a commercial document.
+5. Ask a RAG question about ETI discounts.
+6. Generate a quote draft.
+7. Retrieve the generated quote.
+8. Display dashboard KPIs.
+9. Explain why human validation is mandatory.
+
+## 12. Production notes
+
+This MVP is intentionally simple, but the architecture prepares production improvements.
+
+Recommended production evolutions:
+
+* Replace in-memory storage with PostgreSQL and SQLAlchemy.
+* Add database migrations with Alembic.
+* Replace simple keyword RAG with embeddings and pgvector.
+* Add authentication and role-based access control.
+* Add request tracing and structured logs.
+* Add monitoring and alerting.
+* Add rate limiting.
+* Add input sanitization and stricter validation.
+* Store audit logs for quote generation and validation.
+* Add a real human approval workflow before quote sending.
+
+## 13. Limitations
+
+Current limitations:
+
+* Quote storage is in memory.
+* Data is lost when the API server restarts.
+* ERP/CRM integration is mocked.
+* RAG uses simple keyword matching.
+* The LLM mode defaults to deterministic mock responses.
+* No authentication is implemented yet.
+* No real email sending or quote sending is implemented.
+* No production database is connected yet.
+* No frontend dashboard is included.
+
+These limitations are acceptable for an MVP and are documented clearly.
+
+## 14. Next improvements
+
+Planned improvements:
+
+* Add PostgreSQL persistence.
+* Add SQLAlchemy models and repositories.
+* Add Alembic migrations.
+* Add pgvector for semantic search.
+* Add LangChain-based RAG pipeline.
+* Add document upload support.
+* Add real OpenAI mode for classification and quote support.
+* Add human approval status for quote drafts.
+* Add quote export to PDF.
+* Add a small frontend dashboard.
+* Add observability with structured logs and metrics.
+
+## LLM mode
+
+Default mode:
+
+```env
+LLM_PROVIDER=mock
+```
+
+This mode works without an API key.
+
+Optional mode:
+
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_api_key_here
+OPENAI_MODEL=gpt-5.5
+```
+
+Never commit the `.env` file.
+
+## Security note
+
+Secrets must be stored in a local `.env` file or a secure secret manager.
+
+The `.env` file must never be committed to GitHub.
+
+Use `.env.example` only to document expected environment variables.
+
+## Final quote safety rule
+
+Every AI-generated quote is a draft.
+
+It must be reviewed and validated by a human before being sent to a customer.
