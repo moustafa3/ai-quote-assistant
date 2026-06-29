@@ -6,7 +6,9 @@ from app.application.schemas.quote_schema import (
     QuoteItemResponse,
 )
 from app.application.use_cases.generate_quote import GenerateQuoteUseCase
+from app.application.use_cases.get_quote import GetQuoteUseCase
 from app.core.exceptions import ResourceNotFoundError
+from app.domain.entities import QuoteDraft
 
 router = APIRouter()
 
@@ -19,7 +21,7 @@ def generate_quote(
     request: QuoteGenerationRequest,
 ) -> QuoteGenerationResponse:
     """
-    Generate an AI quote draft.
+    Generate and save an AI quote draft.
 
     The generated quote is not final and requires human validation.
     """
@@ -36,6 +38,34 @@ def generate_quote(
             detail=str(error),
         ) from error
 
+    return _to_quote_response(quote)
+
+
+@router.get(
+    "/quotes/{quote_id}",
+    response_model=QuoteGenerationResponse,
+)
+def get_quote(quote_id: str) -> QuoteGenerationResponse:
+    """
+    Return a saved quote draft by ID.
+    """
+    use_case = GetQuoteUseCase()
+
+    try:
+        quote = use_case.execute(quote_id=quote_id)
+    except ResourceNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+
+    return _to_quote_response(quote)
+
+
+def _to_quote_response(quote: QuoteDraft) -> QuoteGenerationResponse:
+    """
+    Convert a domain QuoteDraft into an API response.
+    """
     return QuoteGenerationResponse(
         quote_id=quote.quote_id,
         customer_name=quote.customer_name,

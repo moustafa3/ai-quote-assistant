@@ -22,6 +22,7 @@ class QuoteAgent:
 
     def generate(
         self,
+        quote_id: str,
         customer: Customer,
         products: list[Product],
         request: str,
@@ -55,7 +56,7 @@ class QuoteAgent:
         )
 
         return QuoteDraft(
-            quote_id="quote_001",
+            quote_id=quote_id,
             customer_name=customer.name,
             recommended_solution=product.name,
             items=[item],
