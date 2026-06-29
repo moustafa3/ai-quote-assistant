@@ -45,3 +45,24 @@ class DocumentClassification:
 
     document_type: DocumentType
     confidence_score: float
+
+
+@dataclass(frozen=True)
+class SourcePassage:
+    """
+    Text passage retrieved from a local business document.
+    """
+
+    filename: str
+    content: str
+    score: int
+
+
+@dataclass(frozen=True)
+class RagAnswer:
+    """
+    Answer generated from retrieved local document passages.
+    """
+
+    answer: str
+    sources: list[str]

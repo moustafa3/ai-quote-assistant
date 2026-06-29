@@ -4,12 +4,17 @@ AI Quote Assistant is a FastAPI project that simulates a business AI agent for q
 
 ## Current status
 
-Step 1: project initialized with a health endpoint.
+Implemented:
 
-## Run locally
+- Health endpoint
+- Clean Architecture inspired structure
+- Mock ERP/CRM integration
+- Document classification
+- Simple local-document RAG
 
-Create and activate a virtual environment:
+## API endpoints
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+### Health
+
+```text
+GET /api/v1/health
