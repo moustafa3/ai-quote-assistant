@@ -13,9 +13,15 @@ class Settings(BaseSettings):
 
     app_name: str = "ai-quote-assistant"
     environment: str = "local"
+
     llm_provider: str = "mock"
     openai_api_key: str = ""
     openai_model: str = "gpt-5.5"
+
+    erp_provider: str = "mock"
+    erp_api_base_url: str = "http://localhost:9000"
+    erp_api_key: str = "local-demo-key"
+    erp_timeout_seconds: float = 5.0
 
     model_config = SettingsConfigDict(
         env_file=".env",

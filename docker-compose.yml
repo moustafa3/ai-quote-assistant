@@ -12,6 +12,33 @@ services:
       LLM_PROVIDER: mock
       OPENAI_API_KEY: ""
       OPENAI_MODEL: gpt-5.5
+      ERP_PROVIDER: http
+      ERP_API_BASE_URL: http://mock-erp:9000
+      ERP_API_KEY: local-demo-key
+      ERP_TIMEOUT_SECONDS: 5
     volumes:
       - ./docs:/app/docs:ro
+    depends_on:
+      - mock-erp
+    restart: unless-stopped
+
+  mock-erp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-quote-assistant-mock-erp
+    ports:
+      - "9000:9000"
+    command:
+      [
+        "fastapi",
+        "run",
+        "app/integrations/mock_erp_api.py",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "9000"
+      ]
+    environment:
+      ENVIRONMENT: docker
     restart: unless-stopped

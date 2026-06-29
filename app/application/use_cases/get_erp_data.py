@@ -1,5 +1,5 @@
 from app.domain.entities import Customer, Product
-from app.integrations.mock_erp_client import MockERPClient
+from app.integrations.erp_client_factory import ERPClient, create_erp_client
 
 
 class GetERPDataUseCase:
@@ -7,8 +7,8 @@ class GetERPDataUseCase:
     Application use case for reading ERP/CRM data.
     """
 
-    def __init__(self, erp_client: MockERPClient | None = None) -> None:
-        self.erp_client = erp_client or MockERPClient()
+    def __init__(self, erp_client: ERPClient | None = None) -> None:
+        self.erp_client = erp_client or create_erp_client()
 
     def get_customers(self) -> list[Customer]:
         """
