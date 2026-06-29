@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.v1.routes_chat import router as chat_router
+from app.api.v1.routes_dashboard import router as dashboard_router
 from app.api.v1.routes_documents import router as documents_router
 from app.api.v1.routes_erp import router as erp_router
 from app.api.v1.routes_health import router as health_router
@@ -50,6 +51,12 @@ def create_app() -> FastAPI:
         quotes_router,
         prefix="/api/v1",
         tags=["quotes"],
+    )
+
+    app.include_router(
+        dashboard_router,
+        prefix="/api/v1",
+        tags=["dashboard"],
     )
 
     return app

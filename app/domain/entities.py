@@ -101,3 +101,16 @@ class QuoteDraft:
     validation_points: list[str]
     human_validation_required: bool
     confidence_score: float
+
+
+@dataclass(frozen=True)
+class DashboardKpis:
+    """
+    Business KPIs exposed by the mini dashboard.
+    """
+
+    active_agents: int
+    quotes_generated: int
+    average_confidence_score: float
+    human_validation_rate: float
+    estimated_time_saved_minutes: int
