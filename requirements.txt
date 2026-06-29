@@ -1,2 +1,5 @@
 fastapi[standard]
 pydantic-settings
+fastapi[standard]
+pydantic-settings
+openai

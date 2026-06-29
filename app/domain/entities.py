@@ -66,3 +66,38 @@ class RagAnswer:
 
     answer: str
     sources: list[str]
+
+
+@dataclass(frozen=True)
+class QuoteItem:
+    """
+    Single line item in a quote draft.
+    """
+
+    name: str
+    quantity: int
+    unit_price: float
+    total: float
+
+
+@dataclass(frozen=True)
+class QuoteDraft:
+    """
+    AI-generated quote draft.
+
+    This is never a final quote. It always requires human validation.
+    """
+
+    quote_id: str
+    customer_name: str
+    recommended_solution: str
+    items: list[QuoteItem]
+    subtotal: float
+    discount_rate: float
+    discount_amount: float
+    total: float
+    sources: list[str]
+    assumptions: list[str]
+    validation_points: list[str]
+    human_validation_required: bool
+    confidence_score: float

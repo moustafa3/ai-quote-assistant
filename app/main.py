@@ -4,6 +4,7 @@ from app.api.v1.routes_chat import router as chat_router
 from app.api.v1.routes_documents import router as documents_router
 from app.api.v1.routes_erp import router as erp_router
 from app.api.v1.routes_health import router as health_router
+from app.api.v1.routes_quotes import router as quotes_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -43,6 +44,12 @@ def create_app() -> FastAPI:
         chat_router,
         prefix="/api/v1",
         tags=["chat"],
+    )
+
+    app.include_router(
+        quotes_router,
+        prefix="/api/v1",
+        tags=["quotes"],
     )
 
     return app

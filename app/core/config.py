@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     environment: str = "local"
     llm_provider: str = "mock"
     openai_api_key: str = ""
+    openai_model: str = "gpt-5.5"
 
     model_config = SettingsConfigDict(
         env_file=".env",
