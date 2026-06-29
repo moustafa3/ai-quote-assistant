@@ -1,4 +1,13 @@
 from dataclasses import dataclass
+from typing import Literal
+
+
+DocumentType = Literal[
+    "product_catalog",
+    "commercial_conditions",
+    "customer_request",
+    "unknown",
+]
 
 
 @dataclass(frozen=True)
@@ -26,3 +35,13 @@ class Product:
     unit_price: float
     billing: str
     description: str
+
+
+@dataclass(frozen=True)
+class DocumentClassification:
+    """
+    Result of a business document classification.
+    """
+
+    document_type: DocumentType
+    confidence_score: float
